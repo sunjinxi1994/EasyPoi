@@ -53,6 +53,7 @@ dependencies {
  * @Listener 标记监听器 类型应该是TransferListener
  * @Sheet 标记导出的工作表名称
  * @Tag 请求tag 用来后续查询导出导入状态
+ * @SkipRow 导入使用 用来跳过某行 可以用来跳过处理标题
  **/
 public interface Export {
     @Transfer(type = TransferType.Export)
@@ -64,7 +65,9 @@ public interface Export {
                   @Lazy boolean lazy);
     
     @Transfer(type = TransferType.Import)
-    void importData(@Path String path,@Listener TransferListener transferListener);
+    void importData(@Path String path,@Listener TransferListener transferListener,
+                    @SkipRow int[] skipRows
+                   );
 }
 ```
 
@@ -246,15 +249,133 @@ public class ICInfo implements Serializable {
 
 ### 2.4 代码调用
 
+#### 2.4.1 初始化
+
+```java
+ easyPoi= new EasyPoi.Builder()
+//                .addDataProviderFactory(new AptDataProviderFactory())
+//                .addConvertProviderFactory(new AptConvertProviderFactory())
+                .setGeneratePackageName("com.sjx.easypoi.example")
+                .setTableFactory(new JxlTableFactory())
+                .build();
+```
+
+#### 2.4.2 导出数据
+
+```java
+Export export=  easyPoi.getService(Export.class);
+String path=POI_DIR+"/user.xls";
+List<ICInfo> icInfos=new ArrayList<>();
+for (int i=0;i<50;i++){
+    ICInfo icInfo=new ICInfo();
+    //组装数据
+    icInfos.add(icInfo);
+}
+//如果lazy设置为true 调用export不会直接导出 当后面调用transferRequest.start();的时候才会开始导出
+String tag=   export.export(path, icInfos, new TransferListener<ICInfo>() {
+    @Override
+    public void onBeforeExecute() {
+        Log.e(TAG,"onBeforeExecute");
+    }
+
+    @Override
+    public void onStart() {
+        String name= Thread.currentThread().getName();
+        Log.e(TAG,"onStart:"+name);
+    }
+
+    @Override
+    public void onProgressUpdate(int num, int progress,ICInfo icInfo) {
+        Log.e(TAG,"num:"+num+"progress:"+progress);
+        textView.setText("num:"+num+"pro:"+progress);
+        seekBar.setMax(num);
+        seekBar.setProgress(progress);
+    }
+
+    @Override
+    public void onEnd() {
+        Log.e(TAG,"onEnd");
+
+    }
+
+    @Override
+    public void onAfterExecute(Throwable throwable) {
+        if (throwable!=null)
+            Log.e(TAG,"throwable:"+throwable.toString());
+
+    }
+},"record","record",true);
+Log.e(TAG,tag);
+transferRequestManager = easyPoi.getTransferRequestManager();
+//根据tag查询对应的TransferRequest 可以通过TransferRequest控制传输的开始 暂停 恢复等
+transferRequest=transferRequestManager.getRequestByTag(tag);
+this.tag=tag;
+```
+
+#### 2.4.3 导入数据
+
+```java
+ Export export=  easyPoi.getService(Export.class);
+            String path=POI_DIR+"/user.xls";
+            export.importData(path, new TransferListenerAdapter<ICInfo>() {
+
+                @Override
+                public void onBeforeExecute() {
+                    super.onBeforeExecute();
+                    Log.e(TAG,"onBeforeExecute_import");
+                }
+
+                @Override
+                public void onProgressUpdate(int num, int progress, ICInfo data) {
+                    super.onProgressUpdate(num, progress, data);
+                    Log.e(TAG,"num:"+num+"_progress:"+progress);
+                    textView.setText("num:"+num+"pro:"+progress);
+                    seekBar.setMax(num);
+                    seekBar.setProgress(progress);
+                    if (data!=null){
+                        byte[] registerRaw= data.getRegisterPhotoRaw();
+                        byte[] captureRaw=data.getCapturePhotoRaw();
+//                Log.e(TAG,registerRaw.length+"-"+captureRaw.length);
+                        String registerPath= POI_DIR+File.separator+"poi-test/image_register";
+                        String capturePath= POI_DIR+File.separator+"poi-test/image_capture";
+                        FileUtil.saveImage(registerRaw,registerPath,data.getIdNum()+"_"+progress+".jpg");
+                        FileUtil.saveImage(captureRaw,capturePath,data.getIdNum()+"_"+progress+".jpg");
+                        Log.e(TAG,data.toString());
+                    }else {
+                        Log.e(TAG,"skip");
+                    }
 
 
+                }
 
+                @Override
+                public void onAfterExecute(Throwable throwable) {
+                    super.onAfterExecute(throwable);
+                    if (throwable!=null){
+                        Log.e(TAG,throwable.toString());
+                    }else {
+                        Log.e(TAG,"onAfterExecute_import");
 
+                    }
+                }
+            },
+                    //指定跳过标题栏
+                    new int[]{0});
+```
 
+#### 2.4.4 请求控制
 
-
-
-
-
-
-
+```java
+//停止数据传输
+public void stop() {
+    transferRequestManager.stop(tag);
+}
+//恢复数据传输
+public void resume(View view) {
+    transferRequestManager.resume(tag);
+}
+//暂停数据传输
+public void pause(View view) {
+    transferRequestManager.pause(tag);
+}
+```
