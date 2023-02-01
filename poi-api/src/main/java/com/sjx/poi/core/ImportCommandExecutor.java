@@ -21,6 +21,7 @@ import com.sjx.poi.util.ReflectUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 /**
  * author： hanwang
@@ -41,6 +42,7 @@ class ImportCommandExecutor extends AbstractTransferCommandExecutor {
         TransferObservable transferObservable = commandArguments.getTransferObservable();
         ExportParameter exportParameter= commandArguments.getExportParameter();
         String path=exportParameter.getPath().getValue();
+        int[] skipRows = exportParameter.getSkipRow().getValue();
         TransferListener listener=exportParameter.getListener().getValue();
         Type type= listener.getClass().getGenericSuperclass();
         Class actualType=null;
@@ -75,9 +77,15 @@ class ImportCommandExecutor extends AbstractTransferCommandExecutor {
                 sum+=importTable.getRowNum(i);
             }
             int progress=0;
+            PoiLogger.e(TAG,"skipRow:"+ Arrays.toString(skipRows));
             for (int i = 0; i <sheetNum; i++) {
                 int rowNum = importTable.getRowNum(i);
+                PoiLogger.e(TAG,"rowNum:"+rowNum);
                 for (int j = 0; j <rowNum ; j++) {
+                    if (needSkip(skipRows,j)){
+                        transferObservable.onProgressUpdate(sum,++progress,null);
+                        continue;
+                    }
                     try {
                         Object data=    actualType.newInstance();
                         int cellNum = dataRowDefinition.getCellNum();
@@ -126,5 +134,14 @@ class ImportCommandExecutor extends AbstractTransferCommandExecutor {
             importTable.finish();
         }
 
+    }
+
+    private boolean needSkip(int[] skipRows,int current){
+        for (int i = 0; i < skipRows.length; i++) {
+             if (current==skipRows[i]){
+                 return true;
+             }
+        }
+        return false;
     }
 }

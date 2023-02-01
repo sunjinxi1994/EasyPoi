@@ -5,6 +5,7 @@ import com.sjx.annotation.poi.Lazy;
 import com.sjx.annotation.poi.Listener;
 import com.sjx.annotation.poi.Path;
 import com.sjx.annotation.poi.Sheet;
+import com.sjx.annotation.poi.SkipRow;
 import com.sjx.annotation.poi.Tag;
 import com.sjx.annotation.poi.Transfer;
 import com.sjx.annotation.poi.TransferType;
@@ -117,6 +118,8 @@ public class ServiceMethod {
                    parameterHandler=new ParameterHandler.TagParameterHandler();
                }else if (annotation instanceof Sheet){
                    parameterHandler=new ParameterHandler.SheetParameterHandler();
+               }else if (annotation instanceof SkipRow){
+                   parameterHandler=new ParameterHandler.SkipRowParameterHandler();
                }
                parameterHandler.parseParameter(parameterType);
                parameterHandlers.put(i,parameterHandler);

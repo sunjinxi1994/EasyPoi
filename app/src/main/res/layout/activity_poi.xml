@@ -37,7 +37,7 @@
 
     <Button
         android:id="@+id/set_up"
-        android:text="set_up"
+        android:text="导出数据"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
     <Button
         android:id="@+id/pause"
-        android:text="pause"
+        android:text="暂停导出"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
     </Button>
 
     <Button
-        android:text="start"
+        android:text="开始导出"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
     </Button>
 
     <Button
-        android:text="resume"
+        android:text="恢复导出"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
     </Button>
     <Button
         android:id="@+id/stop"
-        android:text="stop"
+        android:text="停止导出"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,6 +104,7 @@
     </Button>
 
     <Button
+        android:visibility="gone"
         android:id="@+id/printInfo"
         android:text="printInfo"
         android:textSize="20sp"
@@ -118,7 +119,7 @@
     </Button>
 
     <Button
-        android:text="import"
+        android:text="导入数据"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

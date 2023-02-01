@@ -15,6 +15,16 @@ import com.sjx.poi.convert.image.FileImageConvert;
 
 import java.io.Serializable;
 import java.util.Date;
+
+
+/**
+ * @TableConfig 用来标记一个java bean类 一个java类对应一张数据表
+ * 数据表由标题行和数据行组成
+ * @TitleRow 用来定义标题行的属性 包括height=标题高度 sortStrategy=排序方式 TitleCell=单元格
+ * @DataRow 用来定义数据行的属性
+ * @DataCell 用来定义数据单元格
+ * @ConvertClass 用来指定数据转换器
+ **/
 @TableConfig
 public class ICInfo implements Serializable {
 

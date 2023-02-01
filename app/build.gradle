@@ -62,7 +62,7 @@ dependencies {
 //    annotationProcessor project(':poi-compiler')
     implementation ('io.github.sunjinxi1994:poi-api:1.0.0')
 
-    annotationProcessor ('io.github.sunjinxi1994:poi-compier:1.0.0')
+    annotationProcessor ('io.github.sunjinxi1994:poi-compiler:1.0.0')
 
 
     testImplementation 'junit:junit:4.+'

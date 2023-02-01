@@ -255,4 +255,31 @@ import java.util.Collection;
         }
 
     }
+
+
+
+    class SkipRowParameterHandler implements ParameterHandler<Boolean>{
+        private Class rawType;
+
+        @Override
+        public void parseParameter(Type type) {
+            if (!(type instanceof Class)){
+                throw new IllegalArgumentException("");
+            }else {
+                Class clazz= (Class) type;
+                this.rawType=clazz;
+                if (!ReflectUtil.isIntArray(clazz)){
+                    throw new IllegalArgumentException("@SkipRow annotation must is applied a int[]  type");
+                }
+            }
+        }
+        @Override
+        public void apply(ExportParameter.Builder builder, Object object) {
+            ParameterInfo.SkipRowParameterInfo parameterInfo=new ParameterInfo.SkipRowParameterInfo();
+            parameterInfo.setValue((int[]) object);
+            parameterInfo.setType(rawType);
+            builder.setTransferSkipRow(parameterInfo);
+        }
+
+    }
 }

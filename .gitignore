@@ -92,3 +92,4 @@ lint/tmp/
 keystore.gpg
 gradle/publish.properties
 local.properties
+pic

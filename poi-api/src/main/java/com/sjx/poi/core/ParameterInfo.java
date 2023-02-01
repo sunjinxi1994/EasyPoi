@@ -47,6 +47,11 @@ import java.util.Collection;
     public static class SheetParameterInfo extends ParameterInfo<String>{
 
     }
+
+    public static class SkipRowParameterInfo extends ParameterInfo<int[]>{
+
+    }
+
     public static class DataParameterInfo extends ParameterInfo<Collection>{
          Class actualType;
 

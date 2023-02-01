@@ -39,6 +39,10 @@ public class ReflectUtil {
         }
     }
 
+    public static boolean isIntArray(Class clazz){
+        return int[].class.isAssignableFrom(clazz)||int[].class.isAssignableFrom(clazz);
+    }
+
     public static boolean isBoolean(Class clazz){
         return boolean.class.isAssignableFrom(clazz)||Boolean.class.isAssignableFrom(clazz);
     }

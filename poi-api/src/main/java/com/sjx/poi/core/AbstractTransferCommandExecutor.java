@@ -12,8 +12,8 @@ import com.sjx.poi.request.RequestController;
  **/
 public abstract class AbstractTransferCommandExecutor  implements TransferCommandExecutor {
 
-    private Object lock=new Object();
-    private Object lazyLock=new Object();
+    private final Object lock=new Object();
+    private final Object lazyLock=new Object();
 
     static final int STATE_PAUSE=1;
     static final int STATE_RESUME=2;
@@ -40,6 +40,7 @@ public abstract class AbstractTransferCommandExecutor  implements TransferComman
     @Override
     public void resume() {
         state=STATE_RESUME;
+        verifyState();
     }
 
     @Override

@@ -14,6 +14,7 @@ class ExportParameter {
     private ParameterInfo.LazyParameterInfo lazy;
     private ParameterInfo.TagParameterInfo tag;
     private ParameterInfo.SheetParameterInfo sheet;
+    private ParameterInfo.SkipRowParameterInfo skipRow;
 
     private ExportParameter(Builder builder){
         path=builder.path;
@@ -22,6 +23,7 @@ class ExportParameter {
         lazy=builder.lazy;
         tag=builder.tag;
         sheet=builder.sheet;
+        skipRow=builder.skipRow;
     }
 
     public ParameterInfo.SheetParameterInfo getSheet() {
@@ -49,6 +51,10 @@ class ExportParameter {
         return tag;
     }
 
+    public ParameterInfo.SkipRowParameterInfo getSkipRow() {
+        return skipRow;
+    }
+
     public   static class Builder{
         private ParameterInfo.PathParameterInfo path;
         private ParameterInfo.DataParameterInfo data;
@@ -56,6 +62,7 @@ class ExportParameter {
         private ParameterInfo.LazyParameterInfo lazy;
         private ParameterInfo.TagParameterInfo tag;
         private ParameterInfo.SheetParameterInfo sheet;
+        private ParameterInfo.SkipRowParameterInfo skipRow;
 
         public ExportParameter.Builder setTransferSheet(ParameterInfo.SheetParameterInfo sheet) {
             this.sheet = sheet;
@@ -83,6 +90,10 @@ class ExportParameter {
 
         public ExportParameter.Builder setTransferTag(ParameterInfo.TagParameterInfo tag) {
             this.tag = tag;
+            return this;
+        }
+        public ExportParameter.Builder setTransferSkipRow(ParameterInfo.SkipRowParameterInfo skipRowParameterInfo) {
+            this.skipRow = skipRowParameterInfo;
             return this;
         }
 

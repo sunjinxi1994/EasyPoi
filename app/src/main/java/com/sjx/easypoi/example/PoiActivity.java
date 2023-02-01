@@ -43,12 +43,17 @@ public class PoiActivity extends AppCompatActivity {
     private TransferRequest transferRequest;
     private TransferRequestManager transferRequestManager;
     private String tag;
+
+    private EasyPoi easyPoi;
+    private static final String POI_DIR=Environment.getExternalStorageDirectory().getAbsolutePath()+"/poi-test";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poi);
         textView=findViewById(R.id.tv_progress);
         seekBar=findViewById(R.id.sb_progress);
+        init();
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
             List<String> deniedPermissions=new ArrayList<>();
@@ -72,6 +77,16 @@ public class PoiActivity extends AppCompatActivity {
         }
     }
 
+
+    private void init(){
+         easyPoi= new EasyPoi.Builder()
+//                .addDataProviderFactory(new AptDataProviderFactory())
+//                .addConvertProviderFactory(new AptConvertProviderFactory())
+                .setGeneratePackageName("com.sjx.easypoi.example")
+                .setTableFactory(new JxlTableFactory())
+                .build();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -89,63 +104,29 @@ public class PoiActivity extends AppCompatActivity {
     }
 
 
-    private void startImport(){
-        PoiLogger.setEnable(BuildConfig.DEBUG);
-        EasyPoi easyPoi= new EasyPoi.Builder()
-//                .addDataProviderFactory(new AptDataProviderFactory())
-//                .addConvertProviderFactory(new AptConvertProviderFactory())
-                .setGeneratePackageName("com.sjx.easypoi.example")
-                .setTableFactory(new JxlTableFactory())
-                .build();
-        Export export=  easyPoi.getService(Export.class);
-        String path="/sdcard/poi-test/user.xls";
-        export.importData(path, new TransferListenerAdapter<ICInfo>() {
-            @Override
-            public void onProgressUpdate(int num, int progress, ICInfo data) {
-                super.onProgressUpdate(num, progress, data);
-                byte[] registerRaw= data.getRegisterPhotoRaw();
-                byte[] captureRaw=data.getCapturePhotoRaw();
-                Log.e(TAG,registerRaw.length+"-"+captureRaw.length);
-                String registerPath= Environment.getExternalStorageDirectory().toString()+File.separator+"poi-test/image_register";
-                String capturePath= Environment.getExternalStorageDirectory().toString()+File.separator+"poi-test/image_capture";
-                FileUtil.saveImage(registerRaw,registerPath,data.getIdNum()+"_"+progress+".jpg");
-                FileUtil.saveImage(captureRaw,capturePath,data.getIdNum()+"_"+progress+".jpg");
-                Log.e(TAG,data.toString());
-            }
-
-            @Override
-            public void onAfterExecute(Throwable throwable) {
-                super.onAfterExecute(throwable);
-                if (throwable!=null){
-                    Log.e(TAG,throwable.toString());
-                }
-            }
-        });
-    }
-
+    /**
+     * 导出表数据到文件
+     * 导出图片 需要在/sdcard/poi-test 下准备两张图片capture.jpg和register.jpg
+     * @param view
+     */
     public void startExport(View view){
+
+        File file=new File(POI_DIR);
+        if (!file.exists()){
+            file.mkdirs();
+        }
         PoiLogger.setEnable(BuildConfig.DEBUG);
-        EasyPoi easyPoi= new EasyPoi.Builder()
-//                .addDataProviderFactory(new AptDataProviderFactory())
-//                .addConvertProviderFactory(new AptConvertProviderFactory())
-                .setTableFactory(new JxlTableFactory())
-                .setGeneratePackageName("com.sjx.easypoi.example")
-
-                .build();
+        //获取调用接口
         Export export=  easyPoi.getService(Export.class);
-//                Export export2=  easyPoi.getService(Export.class);
-        PoiLogger.e(TAG,export+"");
-//               PoiLogger.e(TAG,export2+"");
-
-        String path="/sdcard/poi-test/user.xls";
+        String path=POI_DIR+"/user.xls";
         List<ICInfo> icInfos=new ArrayList<>();
         for (int i=0;i<50;i++){
             ICInfo icInfo=new ICInfo();
             icInfo.setName("Danny");
-            icInfo.setIdNum("130531199308053611");
+            icInfo.setIdNum("135531199812152546");
             icInfo.setIcNum("784915633");
-            icInfo.setJobNum("4838");
-            icInfo.setDeviceName("新人证类设备");
+            icInfo.setJobNum("4589723");
+            icInfo.setDeviceName("移动设备");
             icInfo.setTamper(35.6f);
             icInfo.setMask((short) 1);
             icInfo.setIsPass((byte) 0);
@@ -154,18 +135,15 @@ public class PoiActivity extends AppCompatActivity {
             icInfo.setRecognitionType(1);
             icInfo.setCompareScore(0.95f);
             icInfo.setCompareTime(new Date());
-            icInfo.setCapturePhoto("/sdcard/poi-test/capture.jpg");
-            icInfo.setRegisterPhoto("/sdcard/poi-test/register.jpg");
+            icInfo.setCapturePhoto(POI_DIR+"/capture.jpg");
+            icInfo.setRegisterPhoto(POI_DIR+"/register.jpg");
             icInfos.add(icInfo);
         }
+        //如果lazy设置为true 调用export不会直接导出 当后面调用transferRequest.start();的时候才会开始导出
         String tag=   export.export(path, icInfos, new TransferListener<ICInfo>() {
             @Override
             public void onBeforeExecute() {
-                PoiLogger.e(TAG,"onBeforeExecute");
-                if (Log.isLoggable(TAG,Log.ERROR)){
-                    Log.e(TAG,"onBeforeExecute");
-                }
-
+                Log.e(TAG,"onBeforeExecute");
             }
 
             @Override
@@ -191,17 +169,77 @@ public class PoiActivity extends AppCompatActivity {
             @Override
             public void onAfterExecute(Throwable throwable) {
                 if (throwable!=null)
-                Log.e(TAG,"throwable:"+throwable.toString());
+                    Log.e(TAG,"throwable:"+throwable.toString());
 
             }
         },"record","record",true);
         Log.e(TAG,tag);
         transferRequestManager = easyPoi.getTransferRequestManager();
+        //根据tag查询对应的TransferRequest 可以通过TransferRequest控制传输的开始 暂停 恢复等
         transferRequest=transferRequestManager.getRequestByTag(tag);
         this.tag=tag;
     }
 
+    /**
+     * @param view
+     * 导入数据
+     */
+    public void importData(View view) {
+            PoiLogger.setEnable(BuildConfig.DEBUG);
+            Export export=  easyPoi.getService(Export.class);
+            String path=POI_DIR+"/user.xls";
+            export.importData(path, new TransferListenerAdapter<ICInfo>() {
+
+                @Override
+                public void onBeforeExecute() {
+                    super.onBeforeExecute();
+                    Log.e(TAG,"onBeforeExecute_import");
+                }
+
+                @Override
+                public void onProgressUpdate(int num, int progress, ICInfo data) {
+                    super.onProgressUpdate(num, progress, data);
+                    Log.e(TAG,"num:"+num+"_progress:"+progress);
+                    textView.setText("num:"+num+"pro:"+progress);
+                    seekBar.setMax(num);
+                    seekBar.setProgress(progress);
+                    if (data!=null){
+                        byte[] registerRaw= data.getRegisterPhotoRaw();
+                        byte[] captureRaw=data.getCapturePhotoRaw();
+//                Log.e(TAG,registerRaw.length+"-"+captureRaw.length);
+                        String registerPath= POI_DIR+File.separator+"poi-test/image_register";
+                        String capturePath= POI_DIR+File.separator+"poi-test/image_capture";
+                        FileUtil.saveImage(registerRaw,registerPath,data.getIdNum()+"_"+progress+".jpg");
+                        FileUtil.saveImage(captureRaw,capturePath,data.getIdNum()+"_"+progress+".jpg");
+                        Log.e(TAG,data.toString());
+                    }else {
+                        Log.e(TAG,"skip");
+                    }
+
+
+                }
+
+                @Override
+                public void onAfterExecute(Throwable throwable) {
+                    super.onAfterExecute(throwable);
+                    if (throwable!=null){
+                        Log.e(TAG,throwable.toString());
+                    }else {
+                        Log.e(TAG,"onAfterExecute_import");
+
+                    }
+                }
+            },
+                    //指定跳过标题栏
+                    new int[]{0});
+    }
+
+
+
+
+
     public void stop(View view) {
+        transferRequestManager.stop(tag);
     }
 
     public void resume(View view) {
@@ -214,9 +252,7 @@ public class PoiActivity extends AppCompatActivity {
 
     public void start(View view) {
         String tag= transferRequest.getTag();
-        Log.e(TAG,tag);
         Log.e(TAG,transferRequest.getState().name());
-
         transferRequest.start();
     }
 
@@ -226,7 +262,5 @@ public class PoiActivity extends AppCompatActivity {
         Log.e(TAG,"request:"+request);
     }
 
-    public void importData(View view) {
-        startImport();
-    }
+
 }
