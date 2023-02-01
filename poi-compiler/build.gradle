@@ -1,0 +1,15 @@
+apply plugin: 'java-library'
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.squareup:javapoet:1.13.0'
+    implementation project(':poi-annotation')
+
+}
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+apply from: rootProject.file('gradle/publish.gradle')

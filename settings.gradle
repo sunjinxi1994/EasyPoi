@@ -1,0 +1,3 @@
+rootProject.name = "EasyPoi"
+include ':app'
+include ':poi-annotation',":poi-compiler","poi-api"

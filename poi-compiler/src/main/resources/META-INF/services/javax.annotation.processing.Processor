@@ -1,0 +1,4 @@
+#com.sunjinxi.apt.MyProcessor
+#com.sunjinxi.apt.DeviceProcessor
+com.sjx.compiler.DataProviderProcessor
+com.sjx.compiler.ConvertProcessor

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <TextView
+        android:text="test"
+        android:textSize="20sp"
+        android:id="@+id/tv_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+    </TextView>
+
+    <SeekBar
+        android:layout_marginTop="20dp"
+        android:id="@+id/sb_progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_progress"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+
+    </SeekBar>
+
+
+
+
+
+    <Button
+        android:id="@+id/set_up"
+        android:text="set_up"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sb_progress"
+        android:layout_marginTop="20dp"
+        android:onClick="startExport"
+        >
+    </Button>
+
+
+    <Button
+        android:id="@+id/pause"
+        android:text="pause"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/set_up"
+        android:layout_marginTop="20dp"
+        android:onClick="pause"
+        >
+    </Button>
+
+    <Button
+        android:text="start"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@id/pause"
+        app:layout_constraintTop_toTopOf="@id/pause"
+        app:layout_constraintTop_toBottomOf="@id/set_up"
+        android:layout_marginLeft="20dp"
+        android:onClick="start"
+        >
+    </Button>
+
+    <Button
+        android:text="resume"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/pause"
+        app:layout_constraintTop_toTopOf="@id/pause"
+        app:layout_constraintTop_toBottomOf="@id/set_up"
+        android:layout_marginRight="20dp"
+        android:onClick="resume"
+        >
+    </Button>
+    <Button
+        android:id="@+id/stop"
+        android:text="stop"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pause"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="20dp"
+        android:onClick="stop"
+        >
+    </Button>
+
+    <Button
+        android:id="@+id/printInfo"
+        android:text="printInfo"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/stop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="20dp"
+        android:onClick="printInfo"
+        >
+    </Button>
+
+    <Button
+        android:text="import"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/printInfo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="20dp"
+        android:onClick="importData"
+        >
+    </Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

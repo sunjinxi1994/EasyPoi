@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+
+compileJava {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
+apply from: rootProject.file('gradle/publish.gradle')

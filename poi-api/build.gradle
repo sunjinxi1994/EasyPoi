@@ -1,0 +1,19 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
+    defaultConfig {
+        minSdkVersion Integer.parseInt(MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(TARGET_SDK_VERSION)
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation  'net.sourceforge.jexcelapi:jxl:2.6.12'
+    implementation  'org.apache.poi:poi:3.8'
+    api project(':poi-annotation')
+}
+
+
+apply from: rootProject.file('gradle/publish.gradle')
