@@ -34,7 +34,7 @@
 ```java
 dependencies {
     //sdk库依赖
-    implementation ('io.github.sunjinxi1994:poi-api:1.0.0')
+    implementation ('io.github.sunjinxi1994:poi-api:1.0.1')
     //注解处理器    
     annotationProcessor ('io.github.sunjinxi1994:poi-compiler:1.0.0')
 }
